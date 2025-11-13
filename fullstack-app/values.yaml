@@ -1,0 +1,55 @@
+namespace: fullstack-app
+
+# =====================
+# MySQL Configuration
+# =====================
+mysql:
+  image: mysql:8.0
+  rootPassword: ROOT
+  database: employdb
+  service:
+    port: 3306
+    type: ClusterIP   # Only accessible inside the cluster
+
+# =====================
+# Backend Configuration
+# =====================
+backend:
+  image: vigneshpoluru1277/lab14-backend-practice:latest
+  replicas: 2
+  port: 2000
+  nodePort: 30025
+  resources:
+    requests:
+      cpu: "100m"
+      memory: "128Mi"
+    limits:
+      cpu: "500m"
+      memory: "256Mi"
+  autoscaling:
+    enabled: true
+    minReplicas: 2
+    maxReplicas: 5
+    targetCPUUtilizationPercentage: 50
+
+# =====================
+# Frontend Configuration
+# =====================
+frontend:
+  image: vigneshpoluru1277/lab14-frontend-practice:latest
+  replicas: 2
+  port: 80
+  nodePort: 30080
+  resources:
+    requests:
+      cpu: "100m"
+      memory: "128Mi"
+    limits:
+      cpu: "500m"
+      memory: "256Mi"
+  autoscaling:
+    enabled: true
+    minReplicas: 2
+    maxReplicas: 5
+    targetCPUUtilizationPercentage: 50
+  apiUrl: "http://localhost:30025"  # Backend NodePort
